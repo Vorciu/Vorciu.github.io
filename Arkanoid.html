@@ -144,7 +144,7 @@
                 myBall.speedY *= -1;
             }
 
-            if (myBall.colideWith(leftWall) ||  myBall.colideWith(rightWall)) {
+            if (myBall.colideWith(leftWall) || myBall.colideWith(myLeftPlatform) || myBall.colideWith(rightWall)) {
                 myBall.speedX *= -1;
             }
 
@@ -156,7 +156,7 @@
                 myFasterBall.speedY *= -1;
             }
 
-            if (myFasterBall.colideWith(leftWall) || myFasterBall.colideWith(rightWall)) {
+            if (myFasterBall.colideWith(leftWall) || myFasterBall.colideWith(myLeftPlatform) || myFasterBall.colideWith(rightWall)) {
                 myFasterBall.speedX *= -1;
             }
 
