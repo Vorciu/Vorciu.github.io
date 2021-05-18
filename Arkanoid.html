@@ -27,16 +27,30 @@
         var topWall;
         var rightWall;
         var bottomWall;
+        var myObstacles = [];
+        var myScoreField;
+        var myScore;
+        var x, y;
 
         function startGame() {
             myPlatform = new component(120, 20, "red", 180, 240);
             myLeftPlatform = new component(20, 120, "blue", 20, 75);
             leftWall = new component(0, 270, "red", 10, 0);
             rightWall = new component(0, 270, "red", 480, 0);
-            topWall = new component(480, 0, "red", 0, 10);
+            topWall = new component(480, 0, "red", 0, 0);
             bottomWall = new component(480, 0, "red", 0, 270);
-            myBall = new drawBall(240, 40, 10, "green", 1, 1);
-            myFasterBall = new drawBall(120, 60, 10, "yellow", 2, 2);
+            myBall = new drawBall(10, "green", 1, 1);
+            myFasterBall = new drawBall(10, "yellow", 2, 2);
+            myScoreField = new component("20px", "Consolas", "black", 180, 20, "text");
+            myScore = 0;
+
+            for (i = 0; i < 10; i += 1) {
+                for (j = 0; j < 3; j += 1) {
+                    x = 40 * i+50;
+                    y = 20 * j+30;
+                    myObstacles.push(new component(30, 10, "pink", x, y));
+                }
+            }
             myGameArea.start();
         }
 
@@ -66,12 +80,12 @@
 
         }
 
-        function drawBall(x, y, radius, color, speedX, speedY) {
+        function drawBall(radius, color, speedX, speedY) {
             this.radius = radius;
             this.speedX = speedX;
             this.speedY = speedY;
-            this.x = x;
-            this.y = y;
+            this.x = Math.floor((Math.random() * 290) + 40);
+            this.y = Math.floor((Math.random() * 140) + 40);
             this.angle = 0;
             this.moveAngle = 1;
             this.update = function () {
@@ -104,7 +118,8 @@
             }
         }
 
-        function component(width, height, color, x, y) {
+        function component(width, height, color, x, y, type) {
+            this.type = type;
             this.width = width;
             this.height = height;
             this.speedX = 0;
@@ -113,18 +128,67 @@
             this.y = y;
             this.update = function () {
                 ctx = myGameArea.context;
-                ctx.fillStyle = color;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
+                if (this.type == "text") {
+                    ctx.font = this.width + " " + this.height;
+                    ctx.fillStyle = color;
+                    ctx.fillText(this.text, this.x, this.y);
+                } else {
+                    ctx.fillStyle = color;
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
             }
             this.newPos = function () {
                 this.x += this.speedX;
                 this.y += this.speedY;
             }
+
+
+            this.crashWith = function (otherobj) {
+                var myleft = this.x;
+                var myright = this.x + (this.width);
+                var mytop = this.y;
+                var mybottom = this.y + (this.height);
+                var otherleft = otherobj.x;
+                var otherright = otherobj.x + (otherobj.width);
+                var othertop = otherobj.y;
+                var otherbottom = otherobj.y + (otherobj.height);
+                var crash = true;
+                if ((mybottom < othertop) ||
+                    (mytop > otherbottom) ||
+                    (myright < otherleft) ||
+                    (myleft > otherright)) {
+                    crash = false;
+                }
+                return crash;
+            }
+
         }
 
         function updateGameArea() {
 
+
             myGameArea.clear();
+            
+            for (i = 0; i < myObstacles.length; i += 1) {
+                if (myBall.colideWith(myObstacles[i])) {
+                    myScore += 1;
+                    //pop.myObstacles([i]);
+                    //destroy(myObstacle[i]);
+                    //return;
+                }
+            }
+
+           
+
+
+
+           
+
+
+
+            for (i = 0; i < myObstacles.length; i += 1) {
+                myObstacles[i].update();
+            }
 
             if (myGameArea.key && myGameArea.key == 37) {
                 myPlatform.speedX = -2;
@@ -149,7 +213,7 @@
             }
 
             if (myBall.colideWith(bottomWall)) {
-                myGameArea.stop();
+                //myGameArea.stop();
             }
 
             if (myFasterBall.colideWith(myPlatform) || myFasterBall.colideWith(topWall)) {
@@ -161,8 +225,31 @@
             }
 
             if (myFasterBall.colideWith(bottomWall)) {
-                myGameArea.stop();
+                //myGameArea.stop();
             }
+
+            //colide with walls
+
+            if (myLeftPlatform.crashWith(topWall) || myLeftPlatform.crashWith(bottomWall)) {
+                myLeftPlatform.speedY *= -1;
+            }
+
+            if (myPlatform.crashWith(leftWall) || myPlatform.crashWith(rightWall)) {
+                myPlatform.speedX *= -1;
+            }
+
+            //collision with platforms
+
+            if (myLeftPlatform.crashWith(myPlatform)) {
+                myLeftPlatform.speedY *= -1;
+                //myPlatform.speedX *= -1;
+            }
+
+            if (myPlatform.crashWith(myLeftPlatform)) {
+                //myLeftPlatform.speedY *= -1;
+                myPlatform.speedX *= -1;
+            }
+
 
             leftWall.update();
             rightWall.update();
@@ -176,7 +263,11 @@
             myBall.update();
             myFasterBall.newPos();
             myFasterBall.update();
+            myScoreField.text = "SCORE: " + myScore;
+            myScoreField.update();
+            myScore.update();
         }
+
 
         function moveleft() {
             myPlatform.speedX -= 2;
