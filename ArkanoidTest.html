@@ -51,6 +51,9 @@
         var ballSpeed = 3;
         var platformSpeed = 6;
         var typeBBlockCounter = 0;
+        var gamemode1 = false;
+        var gamemode2 = false;
+        var destroyedBlocksPosition = [];
         //var background = new Image();
         var isLeftPlatformEnabled = false;
 
@@ -63,6 +66,12 @@
             if (confirm("Do you want to have a second platform?")) {
                 myLeftPlatform = new Platform(paddleHeight, paddleWidth, 20, 130);
                 isLeftPlatformEnabled = true;
+            }
+
+            if (confirm("GameMode 1 or GameMode2?")) {
+                gamemode1 = true;
+            } else {
+                gamemode2 = true;
             }
             leftWall = new component(0, canvasHeight, "red", 0, 0);
             rightWall = new component(0, canvasHeight, "red", canvasWidth, 0);
@@ -229,6 +238,8 @@
                             } else {
                                 myBalls[i].speedY *= -1;
                             }
+                            destroyedBlocksPosition.push(j);
+                            console.log(destroyedBlocksPosition);
                             myObstacles.splice(j, 1);
                             myScore += 1;
                         }
@@ -239,7 +250,11 @@
 
                 }
 
-              
+                if (gamemode1 == true) {
+                    //var blockAddFlag = false;
+                    gamemode1f();
+                }
+                
 
                 
 

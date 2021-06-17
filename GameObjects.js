@@ -22,6 +22,10 @@ class Block {
         ctx.drawImage(this.image, this.x, this.y);
     }
 
+    blockStruckByBall(ball) {
+         
+    }
+
 }
 
 
