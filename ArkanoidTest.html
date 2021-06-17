@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        canvas {
+            border: 1px solid #d3d3d3;
+            background-color: #f1f1f1;
+            padding: 0;
+            margin: auto;
+            display: block;
+        }
+
+        .buttons {
+            text-align: center;
+            margin: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body onload="startGame()">
+    <script src="GameObjects.js"></script>
+    <script src="Collisions.js"></script>
+    <script src="GameManager.js"></script>
+    <script>
+        var myPlatform;
+        var myLeftPlatform;
+        var myBall;
+        var leftWall;
+        var topWall;
+        var rightWall;
+        var bottomWall;
+        var myObstacles = [];
+        var myScoreField;
+        var myScore;
+        var time;
+        var x, y;
+        var isGamePaused = false;
+        var stopTimer;
+        var brickRows = 3;
+        var brickCols = 10;
+        var canvasWidth = 640;
+        var canvasHeight = 480;
+        var paddleWidth = 128;
+        var paddleHeight = 23;
+        var blockWidth = 50;
+        var blockHeight = 20;
+        var ballRadius = 8;
+        var ballSpeed = 3;
+        var platformSpeed = 6;
+        var isLeftPlatformEnabled = false;
+
+
+        // klocki = 50, 20;
+
+        function startGame() {
+            //enableLeftPlatform();
+            myPlatform = new component(paddleWidth, paddleHeight, "red", 180, canvasHeight - 30);
+            if (confirm("Do you want to have a second platform?")) {
+                myLeftPlatform = new component(paddleHeight, paddleWidth, "blue", 20, 130);
+                isLeftPlatformEnabled = true;
+            }
+            leftWall = new component(0, canvasHeight, "red", 0, 0);
+            rightWall = new component(0, canvasHeight, "red", canvasWidth, 0);
+            topWall = new component(canvasWidth, 0, "red", 0, 0);
+            bottomWall = new component(canvasWidth, 0, "red", 0, canvasHeight);
+            myBall = new Ball(ballRadius, ballSpeed, ballSpeed);
+            //myFasterBall = new Ball(ballRadius, 4, 4);
+            myScoreField = new component("20px", "Consolas", "black", 150, 20, "text");
+            myTimeField = new component("20px", "Consolas", "black", 350, 20, "text");
+            myScore = 0;
+            time = 0;
+            stopTimer = false;
+            offsetX = 70;
+            offsetY = 70;
+            offset = 2;
+
+            for (i = 0; i < brickCols; i++) {
+                for (j = 0; j < brickRows; j++) {
+                    x = (blockWidth + offset) * i + offsetX;
+                    y = (blockHeight + offset) * j + offsetY;
+                    myObstacles.push(new component(blockWidth, blockHeight, "pink", x, y));
+                }
+            }
+
+            myGameArea.start();
+        }
+
+        var myGameArea = {
+            canvas: document.createElement("canvas"),
+            start: function () {
+                this.canvas.width = canvasWidth;
+                this.canvas.height = canvasHeight;
+                this.context = this.canvas.getContext("2d");
+                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                this.interval = setInterval(updateGameArea, 20);
+
+                window.addEventListener('keydown', function (e) {
+                    myGameArea.key = e.keyCode;
+                })
+                window.addEventListener('keyup', function (e) {
+                    myGameArea.key = false;
+                })
+
+            },
+            clear: function () {
+                this.context.fillStyle = 'rgba(255, 255, 255, .4)';
+                this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            },
+            stop: function () {
+                clearInterval(this.interval);
+            }
+        }
+
+   
+
+
+        
+
+
+        function updateGameArea() {
+            if (isGamePaused == false) {
+                myGameArea.clear();
+
+
+
+                for (i = 0; i < myObstacles.length; i++) {
+                    if (myBall.ballCrashWithWall(myObstacles[i])) {
+                        if (myBall.y < myObstacles[i].y) {
+                            myBall.speedX *= -1;
+                        } else {
+                            myBall.speedY *= -1;
+                        }
+                        myObstacles.splice(i, 1);
+                        myScore += 1;
+                    }
+                    /*if (myFasterBall.ballCrashWithWall(myObstacles[i])) {
+                        if (myFasterBall.y < myObstacles[i].y) {
+                            myFasterBall.speedX *= -1;
+                        } else {
+                            myFasterBall.speedY *= -1;
+                        }
+                        myObstacles.splice(i, 1);
+                        myScore += 1;
+
+                    }*/
+                }
+
+                for (i = 0; i < myObstacles.length; i++) {
+                    myObstacles[i].update();
+                }
+
+
+
+                if (isLeftPlatformEnabled == true) {
+                    myLeftPlatform.speedY = 0;
+
+                    if (myGameArea.key && myGameArea.key == 38) {
+                        myLeftPlatform.speedY -= platformSpeed;
+                    }
+                    if (myGameArea.key && myGameArea.key == 40) {
+                        myLeftPlatform.speedY += platformSpeed;
+                    }
+
+                    if (myLeftPlatform.crashWithRect(topWall)) {
+                        myLeftPlatform.speedY *= -1;
+                        myLeftPlatform.y = topWall.y + 10;
+                    }
+
+                    if (myLeftPlatform.crashWithRect(bottomWall)) {
+                        myLeftPlatform.speedY *= -1;
+                        myLeftPlatform.y = bottomWall.y - 10 - myLeftPlatform.height; // trzeba coś zrobić odnośnie bloków
+                    }
+
+                    /*if (myFasterBall.ballCrashWithPlatform(myLeftPlatform)) {
+                        if (myFasterBall.x < myLeftPlatform.x) {
+                            myFasterBall.speedY *= -1;
+                        }
+                        else {
+                            myFasterBall.speedX *= -1;
+                        }
+                    }*/
+
+                    /*if (myBall.ballCrashWithPlatform(myLeftPlatform)) {
+                        if (myBall.x < myLeftPlatform.x) {
+                            myBall.speedY *= -1;
+                        }
+                        else {
+                            myBall.speedX *= -1;
+                        }
+                    }*/
+
+                }
+
+                myPlatform.speedX = 0;
+                // poruszanie platformy prawo/lewo
+
+                platformMoveLeft();
+                platformMoveRight();
+
+               
+
+                /*if (myBall.crashWithBall(myFasterBall) || myFasterBall.crashWithBall(myBall)) {
+                    myBall.speedX *= -1;
+                    myFasterBall.speedX *= -1;
+                }*/
+
+                if (myBall.ballCrashWithWall(topWall)) {
+                    myBall.speedY *= -1;
+                }
+
+               /* if (myFasterBall.ballCrashWithWall(rightWall) || myFasterBall.ballCrashWithWall(leftWall)) { //tez left platform
+                    myFasterBall.speedX *= -1;
+                }*/
+
+
+               /* if (myFasterBall.ballCrashWithWall(topWall)) {
+                    myFasterBall.speedY *= -1;
+                }*/
+
+                if (myBall.ballCrashWithWall(rightWall) || myBall.ballCrashWithWall(leftWall)) { //tez left platform
+                    myBall.speedX *= -1;
+                }
+
+
+                myBall.ballCrashWithPlatform(myPlatform);
+                   
+   
+
+
+                /*if (myFasterBall.ballCrashWithPlatform(myPlatform)) {
+                    if (myFasterBall.y > myPlatform.y) {
+                        myFasterBall.speedX *= -1;
+                    } else {
+                        myFasterBall.speedY *= -1;
+                    }
+                }*/
+
+
+                /*if (myFasterBall.ballCrashWithRect(myPlatform) || myFasterBall.ballCrashWithRect(topWall)) {
+                    myFasterBall.speedY *= -1;
+                }
+
+                if (myFasterBall.ballCrashWithRect(rightWall) || myFasterBall.ballCrashWithRect(leftWall)) { //tez left platform
+                    myFasterBall.speedX *= -1;
+                }*/
+
+
+                if (myBall.ballCrashWithWall(bottomWall)) { //|| //myFasterBall.ballCrashWithWall(bottomWall)//
+                    gameLost();
+                }
+
+
+
+
+                /*if (myLeftPlatform.crashWithRect(myPlatform)) {
+                    myLeftPlatform.speedY *= -1;
+                }
+
+                if (myPlatform.crashWithRect(myLeftPlatform)) {
+                    myPlatform.speedX *= -1;
+                }*/
+
+                if (myPlatform.crashWithRect(leftWall)) {
+                    myPlatform.speedX *= -1;
+                    myPlatform.x = leftWall.x + 10;
+                }
+
+                if (myPlatform.crashWithRect(rightWall)) {
+                    myPlatform.speedX *= -1;
+                    myPlatform.x = rightWall.x - 10 - myPlatform.width;
+                }
+
+                leftWall.update();
+                rightWall.update();
+                topWall.update();
+                bottomWall.update();
+                myPlatform.newPos();
+                myPlatform.update();
+                if (isLeftPlatformEnabled == true) {
+                    myLeftPlatform.newPos();
+                    myLeftPlatform.update();
+                }
+                myBall.newPos();
+                myBall.update();
+                //myFasterBall.newPos();
+                //myFasterBall.update();
+                myScoreField.text = "SCORE: " + myScore;
+                myScoreField.update();
+                myTimeField.text = "Time: " + time;
+                myTimeField.update();
+            }
+        }
+
+
+    </script>
+    <div class="buttons">
+        <button onmousedown="unpauseGame()">START</button>
+        <button onmousedown="pauseGame()">STOP</button>
+    </div>
+
+
+</body>
+</html>
