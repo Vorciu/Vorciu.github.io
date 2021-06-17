@@ -5,7 +5,7 @@
     <style>
         canvas {
             border: 1px solid #d3d3d3;
-            background-color: #f1f1f1;
+            background-image: url("images/bg.jpg");
             padding: 0;
             margin: auto;
             display: block;
@@ -31,6 +31,7 @@
         var rightWall;
         var bottomWall;
         var myObstacles = [];
+        var myBalls = [];
         var myScoreField;
         var myScore;
         var time;
@@ -48,6 +49,7 @@
         var ballRadius = 8;
         var ballSpeed = 3;
         var platformSpeed = 6;
+        //var background = new Image();
         var isLeftPlatformEnabled = false;
 
 
@@ -65,7 +67,7 @@
             topWall = new component(canvasWidth, 0, "red", 0, 0);
             bottomWall = new component(canvasWidth, 0, "red", 0, canvasHeight);
             myBall = new Ball(ballRadius, ballSpeed, ballSpeed);
-            //myFasterBall = new Ball(ballRadius, 4, 4);
+            myFasterBall = new Ball(ballRadius, ballSpeed, ballSpeed);
             myScoreField = new component("20px", "Consolas", "black", 150, 20, "text");
             myTimeField = new component("20px", "Consolas", "black", 350, 20, "text");
             myScore = 0;
@@ -74,6 +76,7 @@
             offsetX = 70;
             offsetY = 70;
             offset = 2;
+            
 
             for (i = 0; i < brickCols; i++) {
                 for (j = 0; j < brickRows; j++) {
@@ -92,6 +95,10 @@
                 this.canvas.width = canvasWidth;
                 this.canvas.height = canvasHeight;
                 this.context = this.canvas.getContext("2d");
+               // var background = new Image();
+                //background.src = "images/bg.jpg";
+                
+               
                 document.body.insertBefore(this.canvas, document.body.childNodes[0]);
                 this.interval = setInterval(updateGameArea, 20);
 
@@ -104,7 +111,10 @@
 
             },
             clear: function () {
+
+                //this.context.drawImage(background, 0, 0);
                 this.context.fillStyle = 'rgba(255, 255, 255, .4)';
+                //this.context.clearRect(0, 0, this.width, this.height);
                 this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
             },
             stop: function () {
@@ -134,7 +144,7 @@
                         myObstacles.splice(i, 1);
                         myScore += 1;
                     }
-                    /*if (myFasterBall.ballCrashWithWall(myObstacles[i])) {
+                    if (myFasterBall.ballCrashWithWall(myObstacles[i])) {
                         if (myFasterBall.y < myObstacles[i].y) {
                             myFasterBall.speedX *= -1;
                         } else {
@@ -143,7 +153,7 @@
                         myObstacles.splice(i, 1);
                         myScore += 1;
 
-                    }*/
+                    }
                 }
 
                 for (i = 0; i < myObstacles.length; i++) {
@@ -200,23 +210,24 @@
 
                
 
-                /*if (myBall.crashWithBall(myFasterBall) || myFasterBall.crashWithBall(myBall)) {
-                    myBall.speedX *= -1;
-                    myFasterBall.speedX *= -1;
-                }*/
+                // {
+
+
+                
+                //}
 
                 if (myBall.ballCrashWithWall(topWall)) {
                     myBall.speedY *= -1;
                 }
 
-               /* if (myFasterBall.ballCrashWithWall(rightWall) || myFasterBall.ballCrashWithWall(leftWall)) { //tez left platform
+                if (myFasterBall.ballCrashWithWall(rightWall) || myFasterBall.ballCrashWithWall(leftWall)) { //tez left platform
                     myFasterBall.speedX *= -1;
-                }*/
+                }
 
 
-               /* if (myFasterBall.ballCrashWithWall(topWall)) {
+                if (myFasterBall.ballCrashWithWall(topWall)) {
                     myFasterBall.speedY *= -1;
-                }*/
+                }
 
                 if (myBall.ballCrashWithWall(rightWall) || myBall.ballCrashWithWall(leftWall)) { //tez left platform
                     myBall.speedX *= -1;
@@ -224,6 +235,10 @@
 
 
                 myBall.ballCrashWithPlatform(myPlatform);
+                myFasterBall.ballCrashWithPlatform(myPlatform);
+
+                myBall.checkBallCollision(myFasterBall);
+                myFasterBall.checkBallCollision(myBall);
                    
    
 
@@ -246,9 +261,9 @@
                 }*/
 
 
-                if (myBall.ballCrashWithWall(bottomWall)) { //|| //myFasterBall.ballCrashWithWall(bottomWall)//
+                /*if (myBall.ballCrashWithWall(bottomWall)) { //|| //myFasterBall.ballCrashWithWall(bottomWall)//
                     gameLost();
-                }
+                }*/
 
 
 
@@ -283,8 +298,8 @@
                 }
                 myBall.newPos();
                 myBall.update();
-                //myFasterBall.newPos();
-                //myFasterBall.update();
+                myFasterBall.newPos();
+                myFasterBall.update();
                 myScoreField.text = "SCORE: " + myScore;
                 myScoreField.update();
                 myTimeField.text = "Time: " + time;

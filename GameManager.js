@@ -67,3 +67,4 @@ function platformMoveRight() {
         myPlatform.speedX += platformSpeed;
     }
 }
+
