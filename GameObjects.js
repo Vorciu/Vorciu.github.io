@@ -1,3 +1,30 @@
+class Block {
+
+    constructor(x, y) {
+        var typeArray = ["typeA", "typeB"];
+        var randomNumber = Math.floor(Math.random() * typeArray.length);
+        this.image = new Image();
+        this.width = 50;
+        this.height = 20;
+        this.x = x;
+        this.y = y;
+        this.type = typeArray[randomNumber];
+        if (this.type == "typeA") {
+            this.image.src = "images/blok1a.jpg"; //niebieski
+        } else {
+            this.image.src = "images/blok1b.jpg"; //zielony
+        }
+
+    }
+
+    update() {
+        ctx = myGameArea.context;
+        ctx.drawImage(this.image, this.x, this.y);
+    }
+
+}
+
+
 class Ball {
     constructor(radius, speedX, speedY) {
         this.radius = radius;
@@ -42,6 +69,10 @@ class Ball {
 
 
     checkBallCollision(otherBall) {
+        this.speedX = this.speedX;
+        this.speedY = this.speedY;
+        otherBall.speedX = otherBall.speedX;
+        otherBall.speedY = otherBall.speedY;
         var dx = otherBall.x - this.x,
             dy = otherBall.y - this.y,
             dist = Math.sqrt(dx * dx + dy * dy);
@@ -87,10 +118,10 @@ class Ball {
             //rotate velocities back
             var vel0F = rotate(vel0.x, vel0.y, sin, cos, false),
                 vel1F = rotate(vel1.x, vel1.y, sin, cos, false);
-            this.vx = vel0F.x;
-            this.vy = vel0F.y;
-            otherBall.vx = vel1F.x;
-            otherBall.vy = vel1F.y;
+            this.speedX = vel0F.x;
+            this.speedY = vel0F.y;
+            otherBall.speedX = vel1F.x;
+            otherBall.speedY = vel1F.y;
         }
     }
 
@@ -193,6 +224,55 @@ class Ball {
 
 }
 
+class Platform {
+    constructor(width, height, x, y, type) {
+        this.isOn = true;
+        this.type = type;
+        this.width = width;
+        this.height = height;
+        this.areaFactor = 1;
+        this.speedX = 0;
+        this.speedY = 0;
+        this.x = x;
+        this.y = y;
+        this.image = new Image();
+        this.image.src = "images/platforma2.jpg";
+       
+
+    }
+
+
+    update() {
+        ctx = myGameArea.context;
+        ctx.drawImage(this.image, this.x, this.y);
+    }
+
+    newPos() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+    }
+
+    crashWithRect(otherRect) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherRect.x;
+        var otherright = otherRect.x + (otherRect.width);
+        var othertop = otherRect.y;
+        var otherbottom = otherRect.y + (otherRect.height);
+        var crash = true;
+        if ((mybottom < othertop) ||
+            (mytop > otherbottom) ||
+            (myright < otherleft) ||
+            (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
+    }
+}
+
+
 function component(width, height, color, x, y, type) {
     this.isOn = true;
     this.type = type;
@@ -241,17 +321,10 @@ function component(width, height, color, x, y, type) {
     }
 }
 
-/*class Block {
-       constructor(width, height, x, y, type) {
-           this.width = width;
-           this.height = height;
-           this.x = x;
-           this.y = y;
-           this.type = type;
-       }
 
-   }*/
-    
+
+
+
 class PVector {
     constructor(x, y) {
         this.x = x;

@@ -68,3 +68,11 @@ function platformMoveRight() {
     }
 }
 
+
+
+function addNewBall() {
+    //if (typeBBlockCounter >= 5) {
+        myBalls.push(new Ball(ballRadius, ballSpeed, ballSpeed))
+    //}
+}
+
