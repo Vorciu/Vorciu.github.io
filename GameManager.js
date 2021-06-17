@@ -78,31 +78,51 @@ function addNewBall() {
 
 
 
-
-function spliceDestroyed(){
-    
-
-}
-
-
 function addDestroyed() {
+    let spliceTimer = 
     random = Math.floor(Math.random() * destroyedBlocksPosition.length);
-    console.log(destroyedBlocksPosition[random]);
+    //console.log(destroyedBlocksPosition[random]);
     
     for (i = 0; i < brickCols; i++) {
         for (j = 0; j < brickRows; j++) {
-            if (destroyedBlocksPosition[random] == i * j) {
-                x = (blockWidth) * i + offsetX;
-                y = (blockHeight) * j + offsetY;
-                myObstacles.push(new Block(x, y));
-            }
-            
+                if (destroyedBlocksPosition[random] == i * j) {
+                    x = (blockWidth) * i + offsetX;
+                    y = (blockHeight) * j + offsetY;
+                    myObstacles.push(new Block(x, y));
+                }
+         
         }
     }
 
-    destroyedBlocksPosition.splice(1, random);
-    console.log(destroyedBlocksPosition.length);
+    destroyedBlocksPosition.splice(1, random); //50 razy na sekunde
+    //console.log(destroyedBlocksPosition.length);
 
+}
+
+/*checkLastLineBlock() {
+    for (i = 0; i < 10; i++) {
+        for (j = 0; j < 1; j++) {
+            x = (blockWidth) * i + offsetX;
+            y = (blockHeight) * (j + lastBlockLine) + offsetY;
+            myObstacles.push(new Block(x, y));
+        }
+
+    }
+
+    return lastBlockLine;
+}*/
+
+
+function addNewBlockLine() {
+    for (i = 0; i < 10; i++) {
+        for (j = 0; j < 1; j++) {
+            x = (blockWidth) * i + offsetX;
+            y = (blockHeight) * j + offsetY;
+             myObstacles.push(new Block(x, y)); //50
+        }
+
+    }
+    //lastBlockLine++;
 }
 
 
@@ -121,11 +141,4 @@ function gamemode1f() { //- 1 tryb oznacza ze nadal mamy zawsze 30 bloków tylko 
     }
 }
 
-function gamemode2f() { //2 tryb to trudniejszy co 20-30 sekund dok³adamy ponad najwy¿sz¹ now¹ 1 liniêklocków.
 
-}
-
-
-function destroyedBlocksPos() {
-
-}

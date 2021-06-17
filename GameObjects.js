@@ -8,23 +8,30 @@ class Block {
         this.height = 20;
         this.x = x;
         this.y = y;
-        this.type = typeArray[randomNumber];
-        if (this.type == "typeA") {
+        this.blockType = typeArray[randomNumber];
+        if (this.blockType === "typeA") {
             this.image.src = "images/blok1a.jpg"; //niebieski
         } else {
             this.image.src = "images/blok1b.jpg"; //zielony
         }
-
+        this.timer = 0;
     }
 
     update() {
         ctx = myGameArea.context;
-        ctx.drawImage(this.image, this.x, this.y);
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        this.timer += 1;
     }
 
-    blockStruckByBall(ball) {
-         
+    newPos() {
+        if (this.timer === 250) { //5s
+            this.y += this.height;
+            this.timer = 0;
+        }
+      
     }
+
+
 
 }
 
@@ -37,7 +44,7 @@ class Ball {
         this.x = Math.floor((Math.random() * 400) + 70); // do zmiany
         this.y = Math.floor((Math.random() * 40) + 150);  // do zmiany
         this.image = new Image();
-        this.image.src = "images/pilka.jpg";
+        this.image.src = "images/pilka.png";
         this.mass = 2;
         this.dx = Math.random(-5, 4);
         this.dy = Math.random(-4, 4);
@@ -50,7 +57,7 @@ class Ball {
         ctx = myGameArea.context;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-        ctx.drawImage(this.image, this.x , this.y);
+        ctx.drawImage(this.image, this.x, this.y, 10, 10);
         ctx.closePath();
 
         /*if ((this.pos.x <= this.rad && this.vel.x < 0) ||
@@ -240,7 +247,12 @@ class Platform {
         this.x = x;
         this.y = y;
         this.image = new Image();
-        this.image.src = "images/platforma2.jpg";
+        if (this.type = "my") {
+            this.image.src = "images/platforma3.png";
+        } else {
+            this.image.src = "images/platforma4.png";
+        } 
+            
        
 
     }
@@ -248,7 +260,7 @@ class Platform {
 
     update() {
         ctx = myGameArea.context;
-        ctx.drawImage(this.image, this.x, this.y);
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
 
     newPos() {

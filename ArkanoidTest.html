@@ -5,7 +5,7 @@
     <style>
         canvas {
             border: 1px solid #d3d3d3;
-            background-image: url("images/bg.jpg");
+           
             padding: 0;
             margin: auto;
             display: block;
@@ -20,7 +20,6 @@
 </head>
 <body onload="startGame()">
     <script src="GameObjects.js"></script>
-    <script src="Collisions.js"></script>
     <script src="GameManager.js"></script>
     <script>
         var myPlatform;
@@ -54,15 +53,15 @@
         var gamemode1 = false;
         var gamemode2 = false;
         var destroyedBlocksPosition = [];
-        //var background = new Image();
         var isLeftPlatformEnabled = false;
+        var lastBlockLine = 3;
 
 
         // klocki = 50, 20;
 
         function startGame() {
             //enableLeftPlatform();
-            myPlatform = new Platform(paddleWidth, paddleHeight, 180, canvasHeight - 30);
+            myPlatform = new Platform(paddleWidth, paddleHeight, 180, canvasHeight - 30, "my");
             if (confirm("Do you want to have a second platform?")) {
                 myLeftPlatform = new Platform(paddleHeight, paddleWidth, 20, 130);
                 isLeftPlatformEnabled = true;
@@ -98,6 +97,8 @@
                 }
             }
 
+           // if (myObstacles[i].blockType === "typeB")
+
             myGameArea.start();
         }
 
@@ -106,9 +107,9 @@
             start: function () {
                 this.canvas.width = canvasWidth;
                 this.canvas.height = canvasHeight;
-                this.context = this.canvas.getContext("2d");
-                var background = new Image();
-                background.src = "images/bg2.jpg";
+                this.context = this.canvas.getContext("2d");    
+                this.background = new Image();
+                this.background.src = "images/bg2.jpg";
                 
                
                 document.body.insertBefore(this.canvas, document.body.childNodes[0]);
@@ -123,11 +124,12 @@
 
             },
             clear: function () {
-
-                //this.context.drawImage(background, 0, 0);
-                this.context.fillStyle = 'rgba(255, 255, 255, .4)';
+                this.context.globalAlpha = 0.4;
+                this.context.drawImage(this.background, 0, 0);
+                //this.context.fillStyle = 'rgba(255, 255, 255, .4)';
                 //this.context.clearRect(0, 0, this.width, this.height);
-                this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                //this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                this.context.globalAlpha = 1;
             },
             stop: function () {
                 clearInterval(this.interval);
@@ -161,6 +163,9 @@
 
                 for (i = 0; i < myObstacles.length; i++) {
                     myObstacles[i].update();
+                    if (gamemode2 == true) {
+                        myObstacles[i].newPos();
+                    }
                 }
 
 
@@ -219,43 +224,54 @@
                 
                 //}
 
-                for (i = 0; i < myBalls.length; i++) {
-                    if (myBalls[i].ballCrashWithWall(topWall)) {
-                        myBalls[i].speedY *= -1;
-                    }
-
-
-                    if (myBalls[i].ballCrashWithWall(rightWall) || myBalls[i].ballCrashWithWall(leftWall)) { //tez left platform
-                        myBalls[i].speedX *= -1;
-                    }
-
-                    myBalls[i].ballCrashWithPlatform(myPlatform);
-
-                    for (j = 0; j < myObstacles.length; j++) {
-                        if (myBalls[i].ballCrashWithWall(myObstacles[j])) {
-                            if (myBalls[i].y < myObstacles[j].y) {
-                                myBalls[i].speedX *= -1;
-                            } else {
-                                myBalls[i].speedY *= -1;
-                            }
-                            destroyedBlocksPosition.push(j);
-                            console.log(destroyedBlocksPosition);
-                            myObstacles.splice(j, 1);
-                            myScore += 1;
+                if (myBalls.length > 0) {
+                    //console.log(myBalls.length);
+                    for (i = 0; i < myBalls.length; i++) {
+                        if (myBalls[i].ballCrashWithWall(topWall)) {
+                            myBalls[i].speedY *= -1;
                         }
+
+
+                        if (myBalls[i].ballCrashWithWall(rightWall) || myBalls[i].ballCrashWithWall(leftWall)) { //tez left platform
+                            myBalls[i].speedX *= -1;
+                        }
+
+                        myBalls[i].ballCrashWithPlatform(myPlatform);
+
+                        for (j = 0; j < myObstacles.length; j++) {
+                            if (myBalls[i].ballCrashWithWall(myObstacles[j])) {
+                                if (myBalls[i].y < myObstacles[j].y) {
+                                    myBalls[i].speedX *= -1;
+                                } else {
+                                    myBalls[i].speedY *= -1;
+                                }
+                                destroyedBlocksPosition.push(j);
+                                //console.log(destroyedBlocksPosition);
+                                myObstacles.splice(j, 1);
+                                myScore += 1;
+                            }
+                        }
+                        myBalls[i].newPos();
+                        myBalls[i].update();
+
+                        if (myBalls[i].ballCrashWithWall(bottomWall)) {
+                            myBalls.splice(i, 1);
+                        }
+
+                       
+
                     }
 
-                    myBalls[i].newPos();
-                    myBalls[i].update();
-
-                }
-
-                if (gamemode1 == true) {
-                    //var blockAddFlag = false;
-                    gamemode1f();
+                    
                 }
                 
-
+                
+                if (gamemode1 == true) {
+                    
+                    gamemode1f();
+                } else if (gamemode2 == true && myObstacles[0].y > offsetY) {
+                    addNewBlockLine();
+                }
                 
 
                 if (myBalls.length >= 2) {
@@ -264,14 +280,16 @@
                 }
 
                 if (myScore >= 5) {
-                    if (myBalls.length < 2) {
+                    if (myBalls.length < 2 && myBalls.length > 0) {
                         addNewBall();
                     }
                   
                 }
                 
-
-
+                if (myBalls.length <= 0) {
+                    gameLost();
+                }
+               
                 
 
                 //myFasterBall.ballCrashWithPlatform(myPlatform);
@@ -281,7 +299,7 @@
    
 
 
-                /*if (myBall.ballCrashWithWall(bottomWall)) { //|| //myFasterBall.ballCrashWithWall(bottomWall)//
+                /*if (myBalls[i].ballCrashWithWall(bottomWall) && myBalls[1].ballCrashWithWall(bottomWall)) {
                     gameLost();
                 }*/
 
@@ -322,7 +340,7 @@
                 myTimeField.update();
             }
         }
-
+    
 
     </script>
     <div class="buttons">
