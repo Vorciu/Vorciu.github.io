@@ -245,14 +245,14 @@
                                 if (myObstacles[j].blockType === "typeA") { //2
                                   
                                     if (powerupsArray != null) {
-                                    powerupsArray.push(new Powerups(myObstacles[j].x, this.y));
-                                    for (k = 0; k < powerupsArray.length; k++) {
-                                        powerupEffect(powerupsArray[k]);
-                                        }
+                                        powerupsArray.push(new Powerups(myObstacles[j].x, this.y));
+                                        for (k = 0; k < powerupsArray.length; k++) {
+                                            powerupEffect(powerupsArray[k]);
+                                        
                                         if (powerupsArray[k].isPowerupCaught == true) {
                                             powerupTime = time;
                                         }
-                                   
+                                    }
                                     }
                                     
 

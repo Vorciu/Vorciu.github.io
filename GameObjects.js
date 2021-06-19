@@ -8,6 +8,7 @@ class Powerups {
         this.height = 18;
         this.image = new Image();
         this.isPowerupCaught = false;
+        this.time = 0;
         this.powerupType = powerupArray[randomNumber];
         if (this.powerupType === "Scorex2") {
             this.image.src = "images/Scorex2.png";
@@ -32,8 +33,9 @@ class Powerups {
 
         if (this.y == myPlatform.y && this.x >= myPlatform.x && this.x <= myPlatform.x + myPlatform.width) {
             this.isPowerupCaught = true;
-            console.log("yay");
+            this.time++;
         }
+        
     }
 }
 

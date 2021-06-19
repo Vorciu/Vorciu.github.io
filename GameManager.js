@@ -68,9 +68,9 @@ function platformMoveRight() {
 
 
 
-function deactivatePowerup() {
-    if ((time - powerupTime) >= 5) {
-        (powerupsArray);//
+function deactivatePowerup(powerup) {
+    if (powerup.time >= 5) {
+        
         console.log("powerupdestroyed");
     }
 }
@@ -79,24 +79,24 @@ function powerupEffect(powerup) {
     if (powerup.powerupType === "Scorex2" && powerup.isPowerupCaught == true) {
         scoreMultiplier = 2;
         powerup.isPowerupCaught == false;
-        deactivatePowerup();
+        
     } else if (powerup.powerupType === "Scorex5" && powerup.isPowerupCaught == true) {
         scoreMultiplier = 5;
         powerup.isPowerupCaught == false;
-        deactivatePowerup();
+       
     } else if (powerup.powerupType === "Enlarge" && powerup.isPowerupCaught == true) {
         myPlatform.width *= 1.2;
         powerup.isPowerupCaught == false;
-        deactivatePowerup();
+        
     } else if (powerup.powerupType === "Reduce" && powerup.isPowerupCaught == true) {
         myPlatform.width *= 0.8;
         powerup.isPowerupCaught == false;
-        deactivatePowerup();
+       
     } else {
         if (powerup.isPowerupCaught == true) {
             scoreMultiplier = 1; //reverse do zrobienia
             powerup.isPowerupCaught == false;
-            deactivatePowerup();
+           
         }
         
     }
