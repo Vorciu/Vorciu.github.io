@@ -47,6 +47,7 @@
         var cancel;
         var powerupsArray = [];
         var powerupTime;
+        var scoreMultiplier = 1;
 
 
         // klocki = 50, 20;
@@ -241,12 +242,17 @@
                         }
                         for (j = 0; j < myObstacles.length; j++) {
                             if (myBalls[i].ballCrashWithWall(myObstacles[j])) {
-                                if (myObstacles[j].blockType === "typeA") {
-
-
+                                if (myObstacles[j].blockType === "typeA") { //2
+                                  
                                     if (powerupsArray != null) {
-                                        powerupsArray.push(new Powerups(myObstacles[j].x, this.y));
-                                        powerupTime = time;
+                                    powerupsArray.push(new Powerups(myObstacles[j].x, this.y));
+                                    for (k = 0; k < powerupsArray.length; k++) {
+                                        powerupEffect(powerupsArray[k]);
+                                        }
+                                        if (powerupsArray[k].isPowerupCaught == true) {
+                                            powerupTime = time;
+                                        }
+                                   
                                     }
                                     
 
@@ -266,7 +272,7 @@
                                 destroyedBlocksPosition.push(j);
                                 //console.log(destroyedBlocksPosition);
                                 myObstacles.splice(j, 1);
-                                myScore += 1;
+                                myScore += 1 * scoreMultiplier;
                             }
                         }
                         myBalls[i].newPos();
