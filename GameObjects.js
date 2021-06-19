@@ -14,21 +14,15 @@ class Block {
         } else {
             this.image.src = "images/blok1b.jpg"; //zielony
         }
-        this.timer = 0;
     }
 
     update() {
         ctx = myGameArea.context;
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        this.timer += 1;
     }
 
     newPos() {
-        if (this.timer === 250) { //5s
             this.y += this.height;
-            this.timer = 0;
-        }
-      
     }
 
 
@@ -59,16 +53,6 @@ class Ball {
         ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
         ctx.drawImage(this.image, this.x, this.y, 10, 10);
         ctx.closePath();
-
-        /*if ((this.pos.x <= this.rad && this.vel.x < 0) ||
-            (this.pos.x >= 480 - 1 - this.rad && this.vel.x > 0)) {
-            this.vel.x = -this.vel.x;
-        }
-        if ((this.pos.y <= this.rad && this.vel.y < 0) ||
-            (this.pos.y >= 640 - 1 - this.rad && this.vel.y > 0)) {
-            this.vel.y = -this.vel.y;
-        }
-        this.pos.add(this.vel);*/
     }
 
     newPos() {
@@ -89,44 +73,33 @@ class Ball {
             dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < this.radius + otherBall.radius) {
-            //calculate angle, sine, and cosine
             var angle = Math.atan2(dy, dx),
                 sin = Math.sin(angle),
                 cos = Math.cos(angle),
 
-                //rotate ball0's position
-                pos0 = { x: 0, y: 0 }, //point
+                pos0 = { x: 0, y: 0 }, 
 
-                //rotate ball1's position
                 pos1 = rotate(dx, dy, sin, cos, true),
 
-                //rotate ball0's velocity
                 vel0 = rotate(this.speedX, this.speedY, sin, cos, true),
 
-                //rotate ball1's velocity
                 vel1 = rotate(otherBall.speedX, otherBall.speedY, sin, cos, true),
-
-                //collision reaction
                 vxTotal = vel0.x - vel1.x;
             vel0.x = ((this.mass - otherBall.mass) * vel0.x + 2 * otherBall.mass * vel1.x) /
                 (this.mass + otherBall.mass);
             vel1.x = vxTotal + vel0.x;
 
-            //update position
             pos0.x += vel0.x;
             pos1.x += vel1.x;
 
-            //rotate positions back
             var pos0F = rotate(pos0.x, pos0.y, sin, cos, false),
                 pos1F = rotate(pos1.x, pos1.y, sin, cos, false);
 
-            //adjust positions to actual screen positions
             otherBall.x = this.x + pos1F.x;
             otherBall.y = this.y + pos1F.y;
             this.x = this.x + pos0F.x;
             this.y = this.y + pos0F.y;
 
-            //rotate velocities back
             var vel0F = rotate(vel0.x, vel0.y, sin, cos, false),
                 vel1F = rotate(vel1.x, vel1.y, sin, cos, false);
             this.speedX = vel0F.x;
@@ -177,12 +150,11 @@ class Ball {
 
 
 
-    ballCrashWithPlatform(wall) {
+    ballCrashWithPlatformBottom(wall) {
         var myCircleX = this.x;
         var myCircleY = this.y;
         var myCircleRadius = this.radius;
         var baseBallSpeedX = ballSpeed;
-        //var baseBallSpeedY = ballSpeed;
 
         var otherleft = wall.x;
         var otherright = wall.x + (wall.width);
@@ -220,10 +192,8 @@ class Ball {
                     this.speedX *= -1;
                 } else if ((myCircleX < otherleft + platform10width * 3 && myCircleX >= otherleft + platform10width) || (myCircleX <= otherright - platform10width && myCircleX >= otherright - platform10width*3)) {
                     this.speedX = baseBallSpeedX * 2;
-                    //this.speedX *= -1;
                 } else if ((myCircleX < otherleft + platform10width * 4 && myCircleX >= otherleft + platform10width * 3) || (myCircleX <= otherright - platform10width * 3 && myCircleX >= otherright - platform10width * 4)) {
                     this.speedX = baseBallSpeedX * 1.5;
-                    //this.speedX *= -1;
                 } else {
                     this.speedX = baseBallSpeedX;
                 }
@@ -233,9 +203,66 @@ class Ball {
 
     }
 
+
+
+    ballCrashWithPlatformLeft(wall) {
+        var myCircleX = this.x;
+        var myCircleY = this.y;
+        var myCircleRadius = this.radius;
+        var baseBallSpeedY = ballSpeed;
+
+        var otherleft = wall.x;
+        var otherright = wall.x + (wall.width);
+        var othertop = wall.y;
+        var otherbottom = wall.y + (wall.height);
+
+        var testX = myCircleX;
+        var testY = myCircleY;
+
+        var platform10height = wall.height / 10;
+
+        if (myCircleX < otherleft) {
+            testX = otherleft;
+        } else if (myCircleX > otherright) {
+            testX = otherright;
+        }
+
+        if (myCircleY < othertop) {
+            testY = othertop;
+        } else if (myCircleY > otherbottom) {
+            testY = otherbottom;
+        }
+
+        var distanceX = myCircleX - testX;
+        var distanceY = myCircleY - testY;
+        var distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+
+        if (distanceSquared <= (myCircleRadius * myCircleRadius)) {
+            if (myCircleX <= otherright) { //otherright?
+                this.speedY *= -1;
+            } else {
+                if ((myCircleY < othertop + platform10height && myCircleY >= othertop) || (myCircleY <= otherbottom && myCircleY > otherbottom - platform10height)) {
+                    this.speedY = baseBallSpeedY * 3;
+                    this.speedY *= -1;
+                } else if ((myCircleY < othertop + platform10height * 3 && myCircleY >= othertop + platform10height) || (myCircleY <= otherbottom - platform10height && myCircleY >= otherbottom - platform10height * 3)) {
+                    this.speedY = baseBallSpeedY * 2;
+                } else if ((myCircleY < othertop + platform10height * 4 && myCircleY >= othertop + platform10height * 3) || (myCircleY <= otherbottom - platform10height * 3 && myCircleY >= otherbottom - platform10height * 4)) {
+                    this.speedY = baseBallSpeedY * 1.5;
+                } else {
+                    this.speedY = baseBallSpeedY;
+                }
+                this.speedX *= -1;
+            }
+        } //MyCircleX = MyCircleY myCircleY , otherleft = othertop, otherright = otherbottom
+
+    }
+
+
+
 }
 
-class Platform {
+class PlatformBottom {
     constructor(width, height, x, y, type) {
         this.isOn = true;
         this.type = type;
@@ -251,9 +278,7 @@ class Platform {
             this.image.src = "images/platforma3.png";
         } else {
             this.image.src = "images/platforma4.png";
-        } 
-            
-       
+        }
 
     }
 
@@ -287,6 +312,60 @@ class Platform {
         return crash;
     }
 }
+
+
+
+class PlatformLeft {
+    constructor(width, height, x, y, type) {
+        this.isOn = true;
+        this.type = type;
+        this.width = width;
+        this.height = height;
+        this.areaFactor = 1;
+        this.speedX = 0;
+        this.speedY = 0;
+        this.x = x;
+        this.y = y;
+        this.image = new Image();
+        if (this.type = "my") {
+            this.image.src = "images/platforma4.png";
+        } else {
+            this.image.src = "images/platforma3.png";
+        }
+
+    }
+
+
+    update() {
+        ctx = myGameArea.context;
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
+
+    newPos() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+    }
+
+    crashWithRect(otherRect) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherRect.x;
+        var otherright = otherRect.x + (otherRect.width);
+        var othertop = otherRect.y;
+        var otherbottom = otherRect.y + (otherRect.height);
+        var crash = true;
+        if ((mybottom < othertop) ||
+            (mytop > otherbottom) ||
+            (myright < otherleft) ||
+            (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
+    }
+}
+
 
 
 function component(width, height, color, x, y, type) {

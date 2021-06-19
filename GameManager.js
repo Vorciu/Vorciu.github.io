@@ -6,24 +6,14 @@ function unpauseGame() {
     isGamePaused = false;
 }
 
-
-/*function restartGame() {
-
-    myGameArea.stop();
-
-    //enableLeftPlatform();
-    startGame();
-}*/
-
-
-
 function timer() {
     if (isGamePaused == false && stopTimer == false) {
-        time += 1;
+        time ++;
     }
 }
 
-var cancel = setInterval(timer, 1000);
+cancel = setInterval(timer, 1000);
+
 
 function hideScores() {
     var x = document.getElementById("players");
@@ -35,24 +25,29 @@ function hideScores() {
 }
 
 function gameLost() {
-    keyPressed = false;
+
     stopTimer = true;
     score = 0;
     time = 0;
     clearInterval(myGameArea.interval);
     isLeftPlatformEnabled = false;
     myLeftPlatform = null;
-    
+    gamemode1 = false;
+    gamemode2 = false;
     alert("You lose!");
     startGame();
 }
 
 function gameWon() {
-    //stopTimer = true;
-    //clearInterval(myGameArea.interval);
-    alert("You win!");
+    stopTimer = true;
+    score = 0;
+    time = 0;
+    clearInterval(myGameArea.interval);
     isLeftPlatformEnabled = false;
     myLeftPlatform = null;
+    gamemode1 = false;
+    gamemode2 = false;
+    alert("You win!");
     startGame();
 }
 
@@ -70,16 +65,18 @@ function platformMoveRight() {
 
 
 
+
+
 function addNewBall() {
-    //if (typeBBlockCounter >= 5) {
+    if (typeBBlockCounter >= 5) {
         myBalls.push(new Ball(ballRadius, ballSpeed, ballSpeed))
-    //}
+        typeBBlockCounter = 0;
+    }
 }
 
 
 
 function addDestroyed() {
-    let spliceTimer = 
     random = Math.floor(Math.random() * destroyedBlocksPosition.length);
     //console.log(destroyedBlocksPosition[random]);
     
@@ -90,7 +87,6 @@ function addDestroyed() {
                     y = (blockHeight) * j + offsetY;
                     myObstacles.push(new Block(x, y));
                 }
-         
         }
     }
 
@@ -99,18 +95,6 @@ function addDestroyed() {
 
 }
 
-/*checkLastLineBlock() {
-    for (i = 0; i < 10; i++) {
-        for (j = 0; j < 1; j++) {
-            x = (blockWidth) * i + offsetX;
-            y = (blockHeight) * (j + lastBlockLine) + offsetY;
-            myObstacles.push(new Block(x, y));
-        }
-
-    }
-
-    return lastBlockLine;
-}*/
 
 
 function addNewBlockLine() {
@@ -118,27 +102,11 @@ function addNewBlockLine() {
         for (j = 0; j < 1; j++) {
             x = (blockWidth) * i + offsetX;
             y = (blockHeight) * j + offsetY;
-             myObstacles.push(new Block(x, y)); //50
+            myObstacles.push(new Block(x, y)); //50
         }
 
     }
     //lastBlockLine++;
-}
-
-
-function gamemode1f() { //- 1 tryb oznacza ze nadal mamy zawsze 30 bloków tylko dok³adamy bloki w trakcieich zbijania. Algorytm do wymyœlenia wybierzemy najlepszy. 
-    //Zasada taka ze ma niebyæ sytuacji w której jest mniej ni¿ 5 klocków na ekranie i max 25. Pomiêdzy t¹wartoœci¹ niektóre klocki pojawiamy ponownie
-    if (destroyedBlocksPosition.length >= 5) {
-        //setInterval(spliceDestroyed, 5000);
-        //setInterval(checkDestroyed, 7500)
-            
-        addDestroyed();
-
-
-            //blockAddFlag = false;
-        
-
-    }
 }
 
 
