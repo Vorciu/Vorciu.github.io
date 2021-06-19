@@ -34,6 +34,7 @@ function gameLost() {
     myLeftPlatform = null;
     gamemode1 = false;
     gamemode2 = false;
+    powerupsArray = null;
     alert("You lose!");
     startGame();
 }
@@ -47,6 +48,7 @@ function gameWon() {
     myLeftPlatform = null;
     gamemode1 = false;
     gamemode2 = false;
+    powerupsArray = null;
     alert("You win!");
     startGame();
 }
@@ -60,6 +62,16 @@ function platformMoveLeft() {
 function platformMoveRight() {
     if (myGameArea.key && myGameArea.key == 39) {
         myPlatform.speedX += platformSpeed;
+    }
+}
+
+
+
+
+function destroyPowerup() {
+    if ((time - powerupTime) >= 5) {
+        shift(powerupsArray);
+        console.log("powerupdestroyed");
     }
 }
 

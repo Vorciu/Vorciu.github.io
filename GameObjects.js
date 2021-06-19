@@ -1,3 +1,45 @@
+class Powerups {
+    constructor(x, y) {
+        var powerupArray = ["Scorex2", "Scorex5", "Enlarge", "Reduce", "Reverse"];
+        var randomNumber = Math.floor(Math.random() * powerupArray.length);
+        this.x = x;
+        this.y = y;
+        this.width = 48;
+        this.height = 18;
+        this.image = new Image();
+        this.isPowerupCaught = false;
+        this.powerupType = powerupArray[randomNumber];
+        if (this.powerupType === "Scorex2") {
+            this.image.src = "images/Scorex2.png";
+        } else if (this.powerupType === "Scorex5") {
+            this.image.src = "images/Scorex5.png";
+        } else if (this.powerupType === "Enlarge") {
+            this.image.src = "images/Enlarge.png";
+        } else if (this.powerupType === "Reduce") {
+            this.image.src = "images/Reduce.png";
+        } else { //Reverse
+            this.image.src = "images/Reverse.png";
+        }
+
+    }
+
+
+
+    update() {
+        ctx = myGameArea.context;
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        this.y++;
+
+        if (this.y == myPlatform.y && this.x >= myPlatform.x && this.x <= myPlatform.x + myPlatform.width) {
+            this.isPowerupCaught = true;
+            console.log("yay");
+        }
+    }
+}
+
+
+
+
 class Block {
 
     constructor(x, y) {
@@ -417,9 +459,6 @@ function component(width, height, color, x, y, type) {
 }
 
 
-
-
-
 class PVector {
     constructor(x, y) {
         this.x = x;
@@ -443,6 +482,8 @@ class PVector {
     }
 
 }
+
+
 
 function rotate(x, y, sin, cos, reverse) {
     return {

@@ -45,6 +45,8 @@
         var lastBlockLine = 3;
         var flag2 = false;
         var cancel;
+        var powerupsArray = [];
+        var powerupTime;
 
 
         // klocki = 50, 20;
@@ -240,7 +242,16 @@
                         for (j = 0; j < myObstacles.length; j++) {
                             if (myBalls[i].ballCrashWithWall(myObstacles[j])) {
                                 if (myObstacles[j].blockType === "typeA") {
-                                    typeABlockCounter++;
+
+
+                                    if (powerupsArray != null) {
+                                        powerupsArray.push(new Powerups(myObstacles[j].x, this.y));
+                                        powerupTime = time;
+                                    }
+                                    
+
+
+
                                 }
 
                                 if (myObstacles[j].blockType === "typeB") {
@@ -272,7 +283,8 @@
 
                 }
 
-
+                
+                
 
                 if (gamemode1 == true) {
                     if (destroyedBlocksPosition.length >= 5 && myObstacles.length >= 5) {
@@ -337,6 +349,13 @@
                     myPlatform.x = rightWall.x - 10 - myPlatform.width;
                 }
 
+                if (powerupsArray != null) {
+                    for (i = 0; i < powerupsArray.length; i++) {
+                    powerupsArray[i].update();
+                }
+                }
+                
+                
                 leftWall.update();
                 rightWall.update();
                 topWall.update();
