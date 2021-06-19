@@ -46,6 +46,7 @@
         var flag2 = false;
         var cancel;
         var powerupsArray = [];
+        var activePowerupsArray = [];
         var powerupTime;
         var scoreMultiplier = 1;
 
@@ -245,18 +246,8 @@
                                 if (myObstacles[j].blockType === "typeA") { //2
                                   
                                     if (powerupsArray != null) {
-                                        powerupsArray.push(new Powerups(myObstacles[j].x, this.y));
-                                        for (k = 0; k < powerupsArray.length; k++) {
-                                            powerupEffect(powerupsArray[k]);
-                                        
-                                        if (powerupsArray[k].isPowerupCaught == true) {
-                                            powerupTime = time;
-                                        }
+                                        powerupsArray.push(new Powerups(myObstacles[j].x, this.y));                          
                                     }
-                                    }
-                                    
-
-
 
                                 }
 
@@ -282,8 +273,19 @@
                             myBalls.splice(i, 1);
                         }
 
+                        
 
+                    }
 
+                    //dodanie powerupu
+                    for (k = 0; k < powerupsArray.length; k++) {
+                        if (powerupsArray[k].isPowerupCaught == true) {
+                            powerupEffect(powerupsArray[k]);
+                            console.log("wystepuje powerup");
+                            powerupsArray[k].isPowerupCaught = false;
+
+                            // powerupTime = time;
+                        }
                     }
 
 
