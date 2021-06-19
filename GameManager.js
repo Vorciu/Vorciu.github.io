@@ -69,9 +69,17 @@ function platformMoveRight() {
 
 
 function deactivatePowerup(powerup) {
+    
     if (powerup.time >= 5) {
+        if (powerup.powerupType === "Scorex2" || powerup.powerupType === "Scorex5") {
+            scoreMultiplier = 1;
+        } else if (powerup.powerupType === "Enlarge" || powerup.powerupType === "Reduce") {
+            myPlatform.width = paddleWidth;
+        } else {
+            scoreMultiplier = 1; // reverse do zrobienia
+        }
         
-        console.log("powerupdestroyed");
+        console.log("powerupdestroyed"); // do dodania usuwanie powerupu
     }
 }
 

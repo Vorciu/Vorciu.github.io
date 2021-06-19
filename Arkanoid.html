@@ -243,7 +243,8 @@
                         }
                         for (j = 0; j < myObstacles.length; j++) {
                             if (myBalls[i].ballCrashWithWall(myObstacles[j])) {
-                                if (myObstacles[j].blockType === "typeA") { //2
+                                if (myObstacles[j].blockType === "typeA" && Math.floor((Math.random() * 5) + 1) == 1) { //2
+                                   
                                   
                                     if (powerupsArray != null) {
                                         powerupsArray.push(new Powerups(myObstacles[j].x, this.y));                          
@@ -278,16 +279,23 @@
                     }
 
                     //dodanie powerupu
-                    for (k = 0; k < powerupsArray.length; k++) {
-                        if (powerupsArray[k].isPowerupCaught == true) {
-                            powerupEffect(powerupsArray[k]);
-                            console.log("wystepuje powerup");
-                            powerupsArray[k].isPowerupCaught = false;
+                    if (powerupsArray != null) {
+                        for (k = 0; k < powerupsArray.length; k++) {
+                            if (powerupsArray[k].isPowerupCaught == true) {
+                                console.log(powerupsArray[k].time);
+                                
 
-                            // powerupTime = time;
+                                //powerupsArray[k].time = time;
+                                powerupEffect(powerupsArray[k]);
+                                console.log("wystepuje powerup");
+                                deactivatePowerup(powerupsArray[k]);
+                                powerupsArray[k].isPowerupCaught = false;
+
+
+                                // powerupTime = time;
+                            }
                         }
                     }
-
 
                 }
 
