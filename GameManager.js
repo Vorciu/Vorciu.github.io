@@ -1,4 +1,8 @@
 function pauseGame() {
+    if (computerAI == true) {
+        gameWonOrLost = false;
+    }
+
     if (gameWonOrLost == true) {
         gameWonOrLost = false;
     }
@@ -6,6 +10,11 @@ function pauseGame() {
 }
 
 function unpauseGame() {
+
+    if (computerAI == true) {
+        gameWonOrLost = false;
+    }
+
     if (gameWonOrLost == true) {
         gameWonOrLost = false;
     }
@@ -39,12 +48,29 @@ function hideScores() {
 
 function gameLost() {
     alert("You lose!");
-    gameWonOrLost = true;
+    //gameWonOrLost = true;
     console.log(additionalTimer);
     console.log(time);
-    
-    if (additionalTimer >= time + 10) {
-        
+
+    if (computerAI == false) {
+        gameWonOrLost = true;
+        if (additionalTimer >= time + 10) {
+
+            score = 0;
+            time = 0;
+            clearInterval(myGameArea.interval);
+            isLeftPlatformEnabled = false;
+            myLeftPlatform = null;
+            gamemode1 = false;
+            gamemode2 = false;
+            powerupsArray = null;
+            computerAI = false;
+            gameWonOrLost = false;
+
+            additionalTimer = 0;
+            startGame();
+        }
+    } else {
         score = 0;
         time = 0;
         clearInterval(myGameArea.interval);
@@ -55,20 +81,36 @@ function gameLost() {
         powerupsArray = null;
         computerAI = false;
         gameWonOrLost = false;
-        
+
         additionalTimer = 0;
         startGame();
     }
-
    
 }
 
 function gameWon() {
     alert("You win!");
-    gameWonOrLost = true;
+    //gameWonOrLost = true;
 
-    if (additionalTimer >= time + 10) {
+    if (computerAI == false) {
+        gameWonOrLost = true;
+        if (additionalTimer >= time + 10) {
 
+            score = 0;
+            time = 0;
+            clearInterval(myGameArea.interval);
+            isLeftPlatformEnabled = false;
+            myLeftPlatform = null;
+            gamemode1 = false;
+            gamemode2 = false;
+            powerupsArray = null;
+            computerAI = false;
+            gameWonOrLost = false;
+
+            additionalTimer = 0;
+            startGame();
+        }
+    } else {
         score = 0;
         time = 0;
         clearInterval(myGameArea.interval);
