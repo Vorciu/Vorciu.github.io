@@ -23,8 +23,7 @@
         var myScore;
         var time;
         var x, y;
-        var isGamePaused = false;
-        var stopTimer;
+        var isGamePaused = true;
         var brickRows = 3;
         var brickCols = 10;
         var canvasWidth = 640;
@@ -49,6 +48,12 @@
         var activePowerupsArray = [];
         var powerupTime;
         var scoreMultiplier = 1;
+        var computerAI = false;
+        var computerOffset;
+        var gamePausedField;
+        var additionalTimer;
+        var myAdditionalTimerField;
+        var gameWonOrLost = false;
 
 
         // klocki = 50, 20;
@@ -58,6 +63,12 @@
 
         function startGame() {
             //enableLeftPlatform();
+
+            disableDatabaseWhenAi();
+            if (confirm("Do want to turn Quasi-AI mode on?")) {
+                computerAI = true;
+            }
+
             myPlatform = new PlatformBottom(paddleWidth, paddleHeight, 180, canvasHeight - 30, "my");
             if (confirm("Do you want to have a second platform?")) {
                 myLeftPlatform = new PlatformLeft(paddleHeight, paddleWidth, 20, 130, "my");
@@ -78,12 +89,14 @@
             //myFasterBall = new Ball(ballRadius, ballSpeed, ballSpeed);
             myScoreField = new component("20px", "Consolas", "black", 150, 20, "text");
             myTimeField = new component("20px", "Consolas", "black", 350, 20, "text");
+            myAdditionalTimerField = new component("20px", "Consolas", "white", canvasWidth/2, 40, "text");
             myScore = 0;
             time = 0;
-            stopTimer = false;
+            additionalTimer = 0;
             offsetX = 70;
             offsetY = 70;
             offset = 1;
+              
 
 
             for (i = 0; i < brickCols; i++) {
@@ -140,11 +153,23 @@
 
 
         function updateGameArea() {
-            if (isGamePaused == false) {
-                myGameArea.clear();
+            myGameArea.clear();
+            if (isGamePaused == true) {
+                myGameArea.context.fillStyle = "white";
+                myGameArea.context.font = "25px Arial";
+                myGameArea.context.fillText("Press start to play the game", (canvasWidth / 2 - 190), 25);
+            } else if (gameWonOrLost == true) {
+                myGameArea.context.fillStyle = "white";
+                myGameArea.context.font = "15px Arial";
+                myGameArea.context.fillText("Submit your score and after 10s press start to play again", (canvasWidth / 2 - 190), 15);
+                if (additionalTimer < time + 10) {
+                    myAdditionalTimerField.text = "Time: " + (additionalTimer - time);
+                    myAdditionalTimerField.update();
+                }
+               
 
-
-
+            } else {
+ 
 
                 /*if (myFasterBall.ballCrashWithWall(myObstacles[i])) {
                     if (myFasterBall.y < myObstacles[i].y) {
@@ -213,8 +238,12 @@
                 myPlatform.speedX = 0;
                 // poruszanie platformy prawo/lewo
 
-                platformMoveLeft();
-                platformMoveRight();
+                if (computerAI == false) {
+                    platformMoveLeft();
+                    platformMoveRight();
+                    enableDatabase();
+                }
+                
 
 
 
@@ -308,7 +337,36 @@
                     }
                 } else if (gamemode2 == true && myObstacles[0].y > offsetY) {
                     addNewBlockLine(); 
+                }
 
+
+
+                if (computerAI == true) {
+                    if (myBalls[0] != null) {
+                        computerOffset = (Math.floor(Math.random() * 4 + 1) * 2);
+                        if (myBalls[0].x < myPlatform.x + myPlatform.width / 2 + computerOffset) {
+                            if (myPlatform.speedX >= myBalls[0].speedX || myPlatform.speedX > myBalls[0].speedY) {
+                                myPlatform.speedX -= platformSpeed;
+
+                                if (myPlatform.x <= leftWall.x + 10 - myPlatform.width) {
+                                    myPlatform.speedX = 0;
+                                }
+
+                            }
+                            
+                           
+                        } else if (myBalls[0].x > myPlatform.x + myPlatform.width / 2 + computerOffset) {
+                            if (myPlatform.speedX <= myBalls[0].speedX || myPlatform.speedX < myBalls[0].speedY) {
+                                myPlatform.speedX += platformSpeed;
+
+                                if (myPlatform.x >= rightWall.x - 10 - myPlatform.width ) {
+                                    myPlatform.speedX = 0;
+                                }
+                               
+                            }
+                        }
+                    }
+                    
                 }
 
 
@@ -389,6 +447,13 @@
             }
         }
 
+        function disableDatabaseWhenAi() {
+            document.getElementById("textbox").style.display = "none";
+        }
+
+        function enableDatabase() {
+            document.getElementById("textbox").style.display = "block";
+        }
 
         function openForm() {
             document.getElementById("myForm").style.display = "block";

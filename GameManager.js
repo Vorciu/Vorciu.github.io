@@ -1,18 +1,31 @@
 function pauseGame() {
+    if (gameWonOrLost == true) {
+        gameWonOrLost = false;
+    }
     isGamePaused = true;
 }
 
 function unpauseGame() {
+    if (gameWonOrLost == true) {
+        gameWonOrLost = false;
+    }
     isGamePaused = false;
 }
 
 function timer() {
-    if (isGamePaused == false && stopTimer == false) {
+    if (isGamePaused == false && gameWonOrLost == false) {
         time ++;
     }
 }
 
+
+function notGameTimeTimer() {
+        additionalTimer++;
+}
+
+
 cancel = setInterval(timer, 1000);
+cancel2 = setInterval(notGameTimeTimer, 1000);
 
 
 function hideScores() {
@@ -25,32 +38,53 @@ function hideScores() {
 }
 
 function gameLost() {
-
-    stopTimer = true;
-    score = 0;
-    time = 0;
-    clearInterval(myGameArea.interval);
-    isLeftPlatformEnabled = false;
-    myLeftPlatform = null;
-    gamemode1 = false;
-    gamemode2 = false;
-    powerupsArray = null;
     alert("You lose!");
-    startGame();
+    gameWonOrLost = true;
+    console.log(additionalTimer);
+    console.log(time);
+    
+    if (additionalTimer >= time + 10) {
+        
+        score = 0;
+        time = 0;
+        clearInterval(myGameArea.interval);
+        isLeftPlatformEnabled = false;
+        myLeftPlatform = null;
+        gamemode1 = false;
+        gamemode2 = false;
+        powerupsArray = null;
+        computerAI = false;
+        gameWonOrLost = false;
+        
+        additionalTimer = 0;
+        startGame();
+    }
+
+   
 }
 
 function gameWon() {
-    stopTimer = true;
-    score = 0;
-    time = 0;
-    clearInterval(myGameArea.interval);
-    isLeftPlatformEnabled = false;
-    myLeftPlatform = null;
-    gamemode1 = false;
-    gamemode2 = false;
-    powerupsArray = null;
     alert("You win!");
-    startGame();
+    gameWonOrLost = true;
+
+    if (additionalTimer >= time + 10) {
+
+        score = 0;
+        time = 0;
+        clearInterval(myGameArea.interval);
+        isLeftPlatformEnabled = false;
+        myLeftPlatform = null;
+        gamemode1 = false;
+        gamemode2 = false;
+        powerupsArray = null;
+        computerAI = false;
+        gameWonOrLost = false;
+
+        additionalTimer = 0;
+        startGame();
+    }
+    
+    
 }
 
 function platformMoveLeft() {
