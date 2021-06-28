@@ -292,7 +292,7 @@
 
                 if (computerAI == true) {
                     if (myBalls[0] != null) {
-                        computerOffset = (Math.floor(Math.random() * 5 + 1) * (myPlatform.width/10)); // 1* 
+                        computerOffset = (Math.floor(Math.random() * 10 + 1) * (myPlatform.width/10)); // 1* 
                         if (myBalls[0].x < myPlatform.x + myPlatform.width / 2 + computerOffset) {
                             if (myPlatform.speedX >= myBalls[0].speedX || myPlatform.speedX > myBalls[0].speedY) {
                                 myPlatform.speedX -= platformSpeed;
