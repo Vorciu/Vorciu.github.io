@@ -54,15 +54,12 @@
         var additionalTimer;
         var myAdditionalTimerField;
         var gameWonOrLost = false;
-
-
-        // klocki = 50, 20;
-
+        var reverseEffect = false;
+        var powerupTimer;
 
 
 
         function startGame() {
-            //enableLeftPlatform();
 
             disableDatabaseWhenAi();
             if (confirm("Do want to turn Quasi-AI mode on?")) {
@@ -86,13 +83,13 @@
             bottomWall = new component(canvasWidth, 0, "red", 0, canvasHeight);
             myBall = new Ball(ballRadius, ballSpeed, ballSpeed);
             myBalls.push(myBall);
-            //myFasterBall = new Ball(ballRadius, ballSpeed, ballSpeed);
             myScoreField = new component("20px", "Consolas", "black", 150, 20, "text");
             myTimeField = new component("20px", "Consolas", "black", 350, 20, "text");
             myAdditionalTimerField = new component("20px", "Consolas", "white", canvasWidth/2, 40, "text");
             myScore = 0;
             time = 0;
             additionalTimer = 0;
+            powerupTimer = 0;
             offsetX = 70;
             offsetY = 70;
             offset = 1;
@@ -106,8 +103,6 @@
                     myObstacles.push(new Block(x, y));
                 }
             }
-
-            // if (myObstacles[i].blockType === "typeB")
 
             myGameArea.start();
         }
@@ -136,9 +131,6 @@
             clear: function () {
                 this.context.globalAlpha = 0.4;
                 this.context.drawImage(this.background, 0, 0);
-                //this.context.fillStyle = 'rgba(255, 255, 255, .4)';
-                //this.context.clearRect(0, 0, this.width, this.height);
-                //this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 this.context.globalAlpha = 1;
             },
             stop: function () {
@@ -170,19 +162,6 @@
 
             } else {
  
-
-                /*if (myFasterBall.ballCrashWithWall(myObstacles[i])) {
-                    if (myFasterBall.y < myObstacles[i].y) {
-                        myFasterBall.speedX *= -1;
-                    } else {
-                        myFasterBall.speedY *= -1;
-                    }
-                    myObstacles.splice(i, 1);
-                    myScore += 1;
-
-                }*/
-
-
                 for (i = 0; i < myObstacles.length; i++) {
                     myObstacles[i].update();
                     if (gamemode2 == true) {
@@ -212,31 +191,12 @@
 
                     if (myLeftPlatform.crashWithRect(bottomWall)) {
                         myLeftPlatform.speedY *= -1;
-                        myLeftPlatform.y = bottomWall.y - 10 - myLeftPlatform.height; // trzeba coś zrobić odnośnie bloków
+                        myLeftPlatform.y = bottomWall.y - 10 - myLeftPlatform.height; 
                     }
-
-                    /*if (myFasterBall.ballCrashWithPlatform(myLeftPlatform)) {
-                        if (myFasterBall.x < myLeftPlatform.x) {
-                            myFasterBall.speedY *= -1;
-                        }
-                        else {
-                            myFasterBall.speedX *= -1;
-                        }
-                    }*/
-
-                    /*if (myBall.ballCrashWithPlatform(myLeftPlatform)) {
-                        if (myBall.x < myLeftPlatform.x) {
-                            myBall.speedY *= -1;
-                        }
-                        else {
-                            myBall.speedX *= -1;
-                        }
-                    }*/
 
                 }
 
                 myPlatform.speedX = 0;
-                // poruszanie platformy prawo/lewo
 
                 if (computerAI == false) {
                     platformMoveLeft();
@@ -247,12 +207,6 @@
 
 
 
-                // {
-
-
-
-                //}
-
                 if (myBalls.length > 0) {
                     //console.log(myBalls.length);
                     for (i = 0; i < myBalls.length; i++) {
@@ -261,7 +215,7 @@
                         }
 
 
-                        if (myBalls[i].ballCrashWithWall(rightWall) || myBalls[i].ballCrashWithWall(leftWall)) { //tez left platform
+                        if (myBalls[i].ballCrashWithWall(rightWall) || myBalls[i].ballCrashWithWall(leftWall)) { 
                             myBalls[i].speedX *= -1;
                         }
 
@@ -272,7 +226,7 @@
                         }
                         for (j = 0; j < myObstacles.length; j++) {
                             if (myBalls[i].ballCrashWithWall(myObstacles[j])) {
-                                if (myObstacles[j].blockType === "typeA" && Math.floor((Math.random() * 4) + 1) == 1) { //2
+                                if (myObstacles[j].blockType === "typeA" && Math.floor((Math.random() * 4) + 1) == 1) { 
                                    
                                   
                                     if (powerupsArray != null) {
@@ -284,14 +238,13 @@
                                 if (myObstacles[j].blockType === "typeB") {
                                     typeBBlockCounter++;
                                 }
-                                //console.log(typeBBlockCounter);
+
                                 if (myBalls[i].y < myObstacles[j].y) {
                                     myBalls[i].speedX *= -1;
                                 } else {
                                     myBalls[i].speedY *= -1;
                                 }
                                 destroyedBlocksPosition.push(j);
-                                //console.log(destroyedBlocksPosition);
                                 myObstacles.splice(j, 1);
                                 myScore += 1 * scoreMultiplier;
                             }
@@ -303,25 +256,21 @@
                             myBalls.splice(i, 1);
                         }
 
-                        
-
                     }
 
-                    //dodanie powerupu
                     if (powerupsArray != null) {
                         for (k = 0; k < powerupsArray.length; k++) {
                             if (powerupsArray[k].isPowerupCaught == true) {
-                                console.log(powerupsArray[k].time);
-                                
-
-                                //powerupsArray[k].time = time;
+                                powerupsTimer();
+                                console.log(powerupTimer);
                                 powerupEffect(powerupsArray[k]);
                                 console.log("wystepuje powerup");
-                                deactivatePowerup(powerupsArray[k]);
+                                if (powerupTimer >= 5) {
+                                    deactivatePowerup(powerupsArray[k]);
+                                    
+                                    powerupTimer = 0;
+                                }
                                 powerupsArray[k].isPowerupCaught = false;
-
-
-                                // powerupTime = time;
                             }
                         }
                     }
@@ -336,7 +285,7 @@
                         addDestroyed();
                     }
                 } else if (gamemode2 == true && myObstacles[0].y > offsetY) {
-                    addNewBlockLine(); 
+                    addNewBlockLine(); //wykonuje sie za duzo razy
                 }
 
 
@@ -388,30 +337,6 @@
                 if (myObstacles.length <= 0) {
                     gameWon();
                 }
-
-
-
-                //myFasterBall.ballCrashWithPlatform(myPlatform);
-
-
-
-
-
-
-                /*if (myBalls[i].ballCrashWithWall(bottomWall) && myBalls[1].ballCrashWithWall(bottomWall)) {
-                    gameLost();
-                }*/
-
-
-
-
-                /*if (myLeftPlatform.crashWithRect(myPlatform)) {
-                    myLeftPlatform.speedY *= -1;
-                }
-
-                if (myPlatform.crashWithRect(myLeftPlatform)) {
-                    myPlatform.speedX *= -1;
-                }*/
 
                 if (myPlatform.crashWithRect(leftWall)) {
                     myPlatform.speedX *= -1;

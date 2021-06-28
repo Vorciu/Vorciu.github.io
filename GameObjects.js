@@ -79,8 +79,8 @@ class Ball {
         this.radius = radius;
         this.speedX = speedX;
         this.speedY = speedY;
-        this.x = Math.floor((Math.random() * 400) + 70); // do zmiany
-        this.y = Math.floor((Math.random() * 40) + 150);  // do zmiany
+        this.x = Math.floor((Math.random() * 400) + 70); 
+        this.y = Math.floor((Math.random() * 40) + 150);  
         this.image = new Image();
         this.image.src = "images/pilka.png";
         this.mass = 2;
@@ -283,7 +283,7 @@ class Ball {
 
 
         if (distanceSquared <= (myCircleRadius * myCircleRadius)) {
-            if (myCircleX <= otherright) { //otherright?
+            if (myCircleX <= otherright) {
                 this.speedY *= -1;
             } else {
                 if ((myCircleY < othertop + platform10height && myCircleY >= othertop) || (myCircleY <= otherbottom && myCircleY > otherbottom - platform10height)) {
@@ -298,7 +298,7 @@ class Ball {
                 }
                 this.speedX *= -1;
             }
-        } //MyCircleX = MyCircleY myCircleY , otherleft = othertop, otherright = otherbottom
+        } 
 
     }
 

@@ -27,6 +27,10 @@ function timer() {
     }
 }
 
+function powerupsTimer() {
+    powerupTimer++;
+}
+
 
 function notGameTimeTimer() {
         additionalTimer++;
@@ -48,14 +52,12 @@ function hideScores() {
 
 function gameLost() {
     alert("You lose!");
-    //gameWonOrLost = true;
     console.log(additionalTimer);
     console.log(time);
 
     if (computerAI == false) {
         gameWonOrLost = true;
         if (additionalTimer >= time + 10) {
-
             score = 0;
             time = 0;
             clearInterval(myGameArea.interval);
@@ -66,7 +68,6 @@ function gameLost() {
             powerupsArray = null;
             computerAI = false;
             gameWonOrLost = false;
-
             additionalTimer = 0;
             startGame();
         }
@@ -81,7 +82,6 @@ function gameLost() {
         powerupsArray = null;
         computerAI = false;
         gameWonOrLost = false;
-
         additionalTimer = 0;
         startGame();
     }
@@ -90,8 +90,6 @@ function gameLost() {
 
 function gameWon() {
     alert("You win!");
-    //gameWonOrLost = true;
-
     if (computerAI == false) {
         gameWonOrLost = true;
         if (additionalTimer >= time + 10) {
@@ -130,33 +128,47 @@ function gameWon() {
 }
 
 function platformMoveLeft() {
-    if (myGameArea.key && myGameArea.key == 37) {
-        myPlatform.speedX -= platformSpeed;
+    if (reverseEffect == false) {
+        if (myGameArea.key && myGameArea.key == 37) {
+            myPlatform.speedX -= platformSpeed;
+        }
     }
+    else {
+        if (myGameArea.key && myGameArea.key == 39) {
+            myPlatform.speedX += platformSpeed;
+        }
+    }
+    
 }
 
 function platformMoveRight() {
-    if (myGameArea.key && myGameArea.key == 39) {
-        myPlatform.speedX += platformSpeed;
+    if (reverseEffect == false) {
+        if (myGameArea.key && myGameArea.key == 39) {
+            myPlatform.speedX += platformSpeed;
+        }
     }
+    else {
+        if (myGameArea.key && myGameArea.key == 37) {
+            myPlatform.speedX -= platformSpeed;
+        }
+    }
+    
 }
 
 
 
 
 function deactivatePowerup(powerup) {
-    
-    if (powerup.time >= 5) {
+    console.log(powerup.time);
         if (powerup.powerupType === "Scorex2" || powerup.powerupType === "Scorex5") {
             scoreMultiplier = 1;
         } else if (powerup.powerupType === "Enlarge" || powerup.powerupType === "Reduce") {
             myPlatform.width = paddleWidth;
         } else {
-            scoreMultiplier = 1; // reverse do zrobienia
+            reverseEffect = false; 
         }
         
-        console.log("powerupdestroyed"); // do dodania usuwanie powerupu
-    }
+        console.log("powerupdestroyed");
 }
 
 function powerupEffect(powerup) {
@@ -176,9 +188,9 @@ function powerupEffect(powerup) {
         myPlatform.width *= 0.8;
         powerup.isPowerupCaught == false;
        
-    } else {
+    } else { //reverse
         if (powerup.isPowerupCaught == true) {
-            scoreMultiplier = 1; //reverse do zrobienia
+            reverseEffect = true;
             powerup.isPowerupCaught == false;
            
         }
@@ -222,14 +234,13 @@ function addDestroyed() {
 
 function addNewBlockLine() {
     for (i = 0; i < 10; i++) {
-        for (j = 0; j < 1; j++) {
+        for (j = 0; j < 10; j++) {
             x = (blockWidth) * i + offsetX;
             y = (blockHeight) * j + offsetY;
-            myObstacles.push(new Block(x, y)); //50
+            myObstacles.push(new Block(x, y)); //prawdodpodobnie tez wykonuje sie 50 razy na sekunde
         }
 
     }
-    //lastBlockLine++;
 }
 
 
