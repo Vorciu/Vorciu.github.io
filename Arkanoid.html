@@ -56,6 +56,7 @@
         var gameWonOrLost = false;
         var reverseEffect = false;
         var powerupTimer;
+        var gamemode2Flag = false;
 
 
 
@@ -262,7 +263,7 @@
                         for (k = 0; k < powerupsArray.length; k++) {
                             if (powerupsArray[k].isPowerupCaught == true) {
                                 powerupsTimer();
-                                console.log(powerupTimer);
+                                //console.log(powerupTimer);
                                 powerupEffect(powerupsArray[k]);
                                 console.log("wystepuje powerup");
                                 if (powerupTimer >= 5) {
@@ -281,11 +282,12 @@
                 
 
                 if (gamemode1 == true) {
-                    if (destroyedBlocksPosition.length >= 5 && myObstacles.length >= 5) {
+                    if (myObstacles.length <= 25 && myObstacles.length >= 5) {
                         addDestroyed();
                     }
-                } else if (gamemode2 == true && myObstacles[0].y > offsetY) {
-                    addNewBlockLine(); //wykonuje sie za duzo razy
+                } else if (gamemode2 == true && myObstacles[0].y > offsetY && (time % 5 == 0)) { 
+                        addNewBlockLine(); //wykonuje sie za duzo razy
+
                 }
 
 
@@ -353,7 +355,10 @@
                     powerupsArray[i].update();
                 }
                 }
-                
+
+                if (time % 4 == 0) {
+                    gamemode2Flag = false;
+                }
                 
                 leftWall.update();
                 rightWall.update();

@@ -27,6 +27,7 @@ function timer() {
     }
 }
 
+
 function powerupsTimer() {
     powerupTimer++;
 }
@@ -159,7 +160,7 @@ function platformMoveRight() {
 
 
 function deactivatePowerup(powerup) {
-    console.log(powerup.time);
+    //console.log(powerup.time);
         if (powerup.powerupType === "Scorex2" || powerup.powerupType === "Scorex5") {
             scoreMultiplier = 1;
         } else if (powerup.powerupType === "Enlarge" || powerup.powerupType === "Reduce") {
@@ -212,8 +213,8 @@ function addNewBall() {
 
 
 function addDestroyed() {
-    random = Math.floor(Math.random() * destroyedBlocksPosition.length);
-    //console.log(destroyedBlocksPosition[random]);
+    random = Math.floor((Math.random() * destroyedBlocksPosition.length) + 1);
+    //console.log(random);
     
     for (i = 0; i < brickCols; i++) {
         for (j = 0; j < brickRows; j++) {
@@ -221,26 +222,24 @@ function addDestroyed() {
                     x = (blockWidth) * i + offsetX;
                     y = (blockHeight) * j + offsetY;
                     myObstacles.push(new Block(x, y));
+                    destroyedBlocksPosition.splice(random, 1);
                 }
         }
     }
 
-    destroyedBlocksPosition.splice(1, random); //50 razy na sekunde
-    //console.log(destroyedBlocksPosition.length);
+   
 
 }
 
 
 
 function addNewBlockLine() {
-    for (i = 0; i < 10; i++) {
-        for (j = 0; j < 10; j++) {
+    for (i = 0; i < brickCols; i++) {
             x = (blockWidth) * i + offsetX;
-            y = (blockHeight) * j + offsetY;
-            myObstacles.push(new Block(x, y)); //prawdodpodobnie tez wykonuje sie 50 razy na sekunde
-        }
-
+            y = (blockHeight) * 1 + offsetY;
+            myObstacles.push(new Block(x, y));
     }
+    
 }
 
 
